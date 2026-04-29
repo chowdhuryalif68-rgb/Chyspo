@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-key="title">চৌধুরী স্পোর্টস - লাইভ গেম আপডেট</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap');
+        /* Using Inter font as default, which supports Bengali and English well */
+        body { font-family: 'Inter', sans-serif; }
+        .scroll-smooth { scroll-behavior: smooth; }
+        .hero-bg { background: linear-gradient(135deg, #030712 0%, #1f2937 100%); }
+        .result-card-shadow {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Sticky navigation with smooth scroll */
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+        }
+        .rotate-180 { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 scroll-smooth">
+
+    <!-- Navigation -->
+    <nav class="bg-white sticky-nav w-full z-50 shadow-xl transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-black text-xl">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <span class="font-extrabold text-2xl tracking-tight text-slate-900" data-key="appTitle">চৌধুরী স্পোর্টস</span>
+                </div>
+                
+                <!-- Desktop Menu & Controls -->
+                <div class="flex space-x-4 sm:space-x-8 items-center">
+                    <a href="#results" class="text-slate-700 hover:text-red-600 font-medium transition hidden sm:block" data-key="navResults">লাইভ ফলাফল</a>
+                    <a href="#departments" class="text-slate-700 hover:text-red-600 font-medium transition hidden sm:block" data-key="navDepartments">বিভাগ</a>
+                    
+                    <!-- Language Toggle Button -->
+                    <button id="lang-toggle" class="bg-slate-100 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-lg font-bold text-sm transition shadow-md" data-key="langBtn">
+                        English
+                    </button>
+
+                    <span id="user-info" class="px-3 py-1.5 rounded-full bg-slate-100 text-xs font-semibold text-slate-500 shadow-inner" data-key="userIdLoading">ইউজার আইডি: লোডিং...</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Dynamic Banner) -->
+    <section id="home" class="hero-bg relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+            <h1 class="text-5xl md:text-6xl font-black tracking-tight mb-4 text-red-500" data-key="heroTitle">
+                গেম রেজাল্টস হাব
+            </h1>
+            <p class="mt-4 max-w-4xl mx-auto text-xl text-slate-300 font-light" data-key="heroSubtitle">
+                আপনার পছন্দের সকল খেলার রিয়েল-টাইম আপডেট এবং ফলাফল দেখুন। অ্যাডমিন যখনই আপডেট করবেন, আপনি সঙ্গে সঙ্গে দেখতে পাবেন।
+            </p>
+        </div>
+    </section>
+
+    <!-- Live Game Results Section (Primary Viewer Focus) -->
+    <section id="results" class="py-24 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-4xl mx-auto mb-16">
+                <h2 class="text-red-600 font-bold tracking-wide uppercase text-sm" data-key="resultsTitle1">সর্বশেষ আপডেট</h2>
+                <p class="mt-2 text-4xl leading-8 font-extrabold tracking-tight text-slate-900 sm:text-5xl" data-key="resultsTitle2">সাম্প্রতিক খেলার ফলাফল</p>
+                <p class="mt-4 text-xl text-slate-500" data-key="resultsSubtitle">প্রতিটি ম্যাচ শেষে ফলাফল এখানে প্রকাশিত হয়।</p>
+            </div>
+
+            <!-- Result Cards Container -->
+            <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Data will be inserted here by JavaScript -->
+                <div id="loading-results" class="md:col-span-3 text-center text-slate-500 text-lg p-10 bg-white rounded-xl shadow-md">
+                    <i class="fa-solid fa-spinner fa-spin mr-2"></i> <span data-key="loadingResults">ফলাফল লোড হচ্ছে...</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Departments Section -->
+    <section id="departments" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-4xl mx-auto mb-16">
+                <h2 class="text-red-600 font-bold tracking-wide uppercase text-sm" data-key="departmentsTitle1">আমাদের লক্ষ্য</h2>
+                <p class="mt-2 text-4xl leading-8 font-extrabold tracking-tight text-slate-900 sm:text-5xl" data-key="departmentsTitle2">খেলার বিভাগসমূহ</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                <!-- Department Cards -->
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-futbol text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportFootball">ফুটবল</h3>
+                </div>
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-cricket-bat-ball text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportCricket">ক্রিকেট</h3>
+                </div>
+                <!-- UPDATED ICON HERE -->
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-cricket-bat-ball text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportMiniCricket">মিনি ক্রিকেট</h3>
+                </div>
+                <!-- END UPDATED ICON -->
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-table-tennis-paddle-ball text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportBadminton">ব্যাডমিন্টন</h3>
+                </div>
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-volleyball text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportVolleyball">ভলিবল</h3>
+                </div>
+                <div class="text-center p-4 bg-slate-50 rounded-xl hover:bg-red-50 transition duration-300 shadow-md">
+                    <i class="fa-solid fa-gamepad text-3xl text-red-600 mb-2"></i>
+                    <h3 class="text-lg font-bold text-slate-800" data-key="sportDailyChallenge">দৈনিক চ্যালেঞ্জ</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ADMIN UPDATE FORM SECTION (Hidden by default, visible only to authenticated admin) -->
+    <section id="admin-panel" class="py-24 bg-slate-900 hidden">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-800 rounded-3xl shadow-2xl overflow-hidden p-8 md:p-12 text-white border border-red-500">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-black text-red-500 uppercase tracking-widest" data-key="adminPanelTitle">ফলাফল আপডেট করুন (অ্যাডমিন)</h2>
+                    <p class="mt-3 text-slate-300 text-lg" data-key="adminPanelSubtitle">নতুন খেলার ফলাফল যোগ করার জন্য এই ফর্মটি ব্যবহার করুন।</p>
+                    <p id="admin-message" class="mt-4 text-sm text-green-400"></p>
+                </div>
+                <form id="result-form" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-2" data-key="adminSportLabel">খেলা/বিভাগ</label>
+                        <select id="update-sport" required class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-red-500 outline-none transition">
+                            <option value="Football" data-key="optFootball">ফুটবল</option>
+                            <option value="Cricket" data-key="optCricket">ক্রিকেট</option>
+                            <option value="Mini Cricket" data-key="optMiniCricket">মিনি ক্রিকেট</option>
+                            <option value="Badminton" data-key="optBadminton">ব্যাডমিন্টন</option>
+                            <option value="Volleyball" data-key="optVolleyball">ভলিবল</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-2" data-key="adminTitleLabel">ম্যাচের শিরোনাম</label>
+                        <input type="text" id="update-title" required class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-red-500 outline-none transition" data-key="adminTitlePlaceholder" placeholder="উদাহরণ: ফাইনাল: টিম এ বনাম টিম বি">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-2" data-key="adminResultLabel">ফলাফল লিখুন</label>
+                        <textarea rows="2" id="update-result" required class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-red-500 outline-none transition" data-key="adminResultPlaceholder" placeholder="উদাহরণ: টিম এ জিতেছে ৩-১ গোলে"></textarea>
+                    </div>
+                    
+                    <!-- NEW: Log Field - Visible only for Cricket/Mini Cricket -->
+                    <div id="log-field-container" class="hidden">
+                        <label class="block text-sm font-bold text-slate-400 mb-2" data-key="adminLogLabel">ম্যাচের বিস্তারিত বিবরণ/লগ</label>
+                        <textarea rows="4" id="update-log" class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-red-500 outline-none transition" data-key="adminLogPlaceholder" placeholder="উদাহরণ: টস জিতে ব্যাটিং নেয় টিম এ, ৩ উইকেট হারিয়ে ১২০ রান করে। টিম বি তাড়া করতে নেমে ১০১ রানে অলআউট হয়।"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-slate-400 mb-2" data-key="adminDateLabel">ম্যাচের তারিখ</label>
+                        <input type="date" id="update-date" required class="w-full px-4 py-3 rounded-lg bg-slate-700 border border-slate-600 text-white focus:border-red-500 outline-none transition">
+                    </div>
+                    <button type="submit" class="w-full bg-red-600 text-white font-black text-lg py-4 rounded-lg hover:bg-red-700 transition shadow-lg shadow-red-500/40 uppercase" data-key="adminPublishButton">
+                        ফলাফল প্রকাশ করুন
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm">
+                &copy; <span id="footer-year"></span> <span data-key="appTitle">চৌধুরী স্পোর্টস</span>। <span data-key="footerRights">সকল অধিকার সংরক্ষিত।</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Firebase and Language Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, addDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel, limit } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- LANGUAGE DATA ---
+        const texts = {
+            bn: {
+                title: "চৌধুরী স্পোর্টস - লাইভ গেম আপডেট",
+                appTitle: "চৌধুরী স্পোর্টস",
+                navResults: "লাইভ ফলাফল",
+                navDepartments: "বিভাগ",
+                langBtn: "English",
+                userIdLoading: "ইউজার আইডি: লোডিং...",
+                userIdGuest: "ইউজার আইডি: গেস্ট",
+                heroTitle: "গেম রেজাল্টস হাব",
+                heroSubtitle: "আপনার পছন্দের সকল খেলার রিয়েল-টাইম আপডেট এবং ফলাফল দেখুন। অ্যাডমিন যখনই আপডেট করবেন, আপনি সঙ্গে সঙ্গে দেখতে পাবেন।",
+                resultsTitle1: "সর্বশেষ আপডেট",
+                resultsTitle2: "সাম্প্রতিক খেলার ফলাফল",
+                resultsSubtitle: "প্রতিটি ম্যাচ শেষে ফলাফল এখানে প্রকাশিত হয়।",
+                loadingResults: "ফলাফল লোড হচ্ছে...",
+                noResults: "বর্তমানে কোনো খেলার ফলাফল প্রকাশিত হয়নি।",
+                departmentsTitle1: "আমাদের লক্ষ্য",
+                departmentsTitle2: "খেলার বিভাগসমূহ",
+                sportFootball: "ফুটবল",
+                sportCricket: "ক্রিকেট",
+                sportMiniCricket: "মিনি ক্রিকেট",
+                sportBadminton: "ব্যাডমিন্টন",
+                sportVolleyball: "ভলিবল",
+                sportDailyChallenge: "দৈনিক চ্যালেঞ্জ",
+                adminPanelTitle: "ফলাফল আপডেট করুন (অ্যাডমিন)",
+                adminPanelSubtitle: "নতুন খেলার ফলাফল যোগ করার জন্য এই ফর্মটি ব্যবহার করুন।",
+                adminSportLabel: "খেলা/বিভাগ",
+                adminTitleLabel: "ম্যাচের শিরোনাম",
+                adminTitlePlaceholder: "উদাহরণ: ফাইনাল: টিম এ বনাম টিম বি",
+                adminResultLabel: "ফলাফল লিখুন",
+                adminResultPlaceholder: "উদাহরণ: টিম এ জিতেছে ৩-১ গোলে",
+                // NEW LOG TEXTS (BN)
+                adminLogLabel: "ম্যাচের বিস্তারিত বিবরণ/লগ",
+                adminLogPlaceholder: "উদাহরণ: টস জিতে ব্যাটিং নেয় টিম এ, ৩ উইকেট হারিয়ে ১২০ রান করে। টিম বি তাড়া করতে নেমে ১০১ রানে অলআউট হয়।",
+                logDetailsToggle: "বিস্তারিত দেখুন",
+                logDetailsHide: "সংক্ষেপে দেখুন",
+                // END NEW LOG TEXTS
+                adminDateLabel: "ম্যাচের তারিখ",
+                adminPublishButton: "ফলাফল প্রকাশ করুন",
+                matchResultLabel: "ম্যাচ ফলাফল:",
+                dateUnknown: "অজানা তারিখ",
+                errorDatabase: "ডেটাবেস সংযোগ ব্যর্থ হয়েছে।",
+                errorLoad: "ফলাফল লোড করা যায়নি।",
+                errorPublishLogin: "ফলাফল প্রকাশ করা যাচ্ছে না। লগইন সমস্যা।",
+                errorPublishFields: "দয়া করে সকল ফিল্ড পূরণ করুন।",
+                successPublish: "ফলাফল সফলভাবে প্রকাশিত হয়েছে!",
+                errorPublish: "ফলাফল প্রকাশে ত্রুটি:",
+                footerRights: "সকল অধিকার সংরক্ষিত।",
+                optFootball: "ফুটবল",
+                optCricket: "ক্রিকেট",
+                optMiniCricket: "মিনি ক্রিকেট",
+                optBadminton: "ব্যাডমিন্টন",
+                optVolleyball: "ভলিবল",
+            },
+            en: {
+                title: "Chowdhury Sports - Live Game Updates",
+                appTitle: "Chowdhury Sports",
+                navResults: "Live Results",
+                navDepartments: "Departments",
+                langBtn: "বাংলা",
+                userIdLoading: "User ID: Loading...",
+                userIdGuest: "User ID: Guest",
+                heroTitle: "Game Results Hub",
+                heroSubtitle: "View real-time updates and results for all your favorite sports. Updates from the admin will appear instantly.",
+                resultsTitle1: "LATEST UPDATE",
+                resultsTitle2: "Recent Game Results",
+                resultsSubtitle: "Results are published here after every match.",
+                loadingResults: "Loading Results...",
+                noResults: "No game results have been published yet.",
+                departmentsTitle1: "OUR FOCUS",
+                departmentsTitle2: "Sports Categories",
+                sportFootball: "Football",
+                sportCricket: "Cricket",
+                sportMiniCricket: "Mini Cricket",
+                sportBadminton: "Badminton",
+                sportVolleyball: "Volleyball",
+                sportDailyChallenge: "Daily Challenge",
+                adminPanelTitle: "UPDATE RESULTS (ADMIN)",
+                adminPanelSubtitle: "Use this form to add new game results.",
+                adminSportLabel: "Sport/Category",
+                adminTitleLabel: "Match Title",
+                adminTitlePlaceholder: "Example: Final: Team A vs Team B",
+                adminResultLabel: "Write Result",
+                adminResultPlaceholder: "Example: Team A won 3-1",
+                // NEW LOG TEXTS (EN)
+                adminLogLabel: "Match Details/Log",
+                adminLogPlaceholder: "Example: Team A won the toss and chose to bat, scoring 120 runs for 3 wickets. Team B was all out for 101 runs.",
+                logDetailsToggle: "View Details",
+                logDetailsHide: "Hide Details",
+                // END NEW LOG TEXTS
+                adminDateLabel: "Match Date",
+                adminPublishButton: "Publish Result",
+                matchResultLabel: "Match Result:",
+                dateUnknown: "Unknown Date",
+                errorDatabase: "Database connection failed.",
+                errorLoad: "Could not load results.",
+                errorPublishLogin: "Cannot publish result. Login issue.",
+                errorPublishFields: "Please fill in all fields.",
+                successPublish: "Result published successfully!",
+                errorPublish: "Error publishing result:",
+                footerRights: "All rights reserved.",
+                optFootball: "Football",
+                optCricket: "Cricket",
+                optMiniCricket: "Mini Cricket",
+                optBadminton: "Badminton",
+                optVolleyball: "Volleyball",
+            }
+        };
+
+        // Initialize with default language or stored preference
+        let currentLang = localStorage.getItem('lang') || 'bn';
+
+        // --- LANGUAGE SWITCHING LOGIC ---
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('lang', lang);
+            document.documentElement.lang = lang; // Set HTML lang attribute
+
+            // 1. Update all elements with data-key
+            document.querySelectorAll('[data-key]').forEach(element => {
+                const key = element.getAttribute('data-key');
+                const translation = texts[lang][key] || element.textContent;
+
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    // Handle placeholders for input fields
+                    const placeholderKey = element.getAttribute('data-key') + 'Placeholder';
+                    if (texts[lang][placeholderKey]) {
+                         element.placeholder = texts[lang][placeholderKey];
+                    }
+                } else if (element.tagName === 'TITLE') {
+                    // Handle document title
+                    document.title = translation;
+                }
+                
+                // General text content update (for most elements and select options)
+                if (element.tagName !== 'INPUT' && element.tagName !== 'TEXTAREA') {
+                    element.textContent = translation;
+                }
+            });
+            
+            // 2. Set the button text to the other language
+            const toggleButton = document.getElementById('lang-toggle');
+            if (toggleButton) {
+                toggleButton.textContent = texts[lang === 'bn' ? 'en' : 'bn'].langBtn;
+            }
+        }
+        
+        // Function to toggle log visibility (added to global scope for delegation)
+        function toggleLogVisibility(event) {
+            const button = event.currentTarget;
+            const logId = button.getAttribute('data-log-id');
+            const logContent = document.getElementById(logId);
+            const icon = button.querySelector('i');
+
+            if (logContent && icon) {
+                const isHidden = logContent.classList.toggle('hidden');
+                // Toggle icon rotation
+                icon.classList.toggle('rotate-180', !isHidden);
+                
+                // Update button text
+                const textSpan = button.querySelector('span[data-key="logDetailsToggle"]');
+                if (textSpan) {
+                    textSpan.textContent = isHidden ? texts[currentLang].logDetailsToggle : texts[currentLang].logDetailsHide;
+                }
+            }
+        }
+
+
+        // --- FIREBASE AND APP LOGIC ---
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof _firebase_config !== 'undefined' ? JSON.parse(_firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app, db, auth;
+        let isAuthReady = false;
+
+        setLogLevel('Debug'); 
+
+        async function initializeFirebase() {
+            if (!firebaseConfig) {
+                console.error("Firebase config is missing. Cannot initialize.");
+                document.getElementById('loading-results').innerHTML = <i class="fa-solid fa-triangle-exclamation mr-2"></i> ${texts[currentLang].errorDatabase};
+                return;
+            }
+            
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                // Sign in using the custom token provided by the environment, or anonymously if missing.
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Listen for authentication state changes
+                onAuthStateChanged(auth, (user) => {
+                    const userInfoElement = document.getElementById('user-info');
+                    const adminPanel = document.getElementById('admin-panel');
+
+                    if (user) {
+                        // Display the full user ID (crucial for multi-user apps)
+                        userInfoElement.textContent = ${texts[currentLang].userIdLoading.split(': ')[0]}: ${user.uid};
+                        if (adminPanel) {
+                             adminPanel.classList.remove('hidden');
+                        }
+                    } else {
+                        userInfoElement.textContent = texts[currentLang].userIdGuest;
+                        if (adminPanel) {
+                            adminPanel.classList.add('hidden');
+                        }
+                    }
+
+                    // Start data subscription only once authentication is settled
+                    if (!isAuthReady) {
+                        listenForGameResults();
+                        isAuthReady = true;
+                    }
+                });
+
+                setupFormSubmission();
+
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+                document.getElementById('loading-results').innerHTML = <i class="fa-solid fa-triangle-exclamation mr-2"></i> ${texts[currentLang].errorDatabase} (${error.code});
+            }
+        }
+
+        function setupFormSubmission() {
+            const form = document.getElementById('result-form');
+            if (form) {
+                form.addEventListener('submit', handleResultSubmission);
+            }
+            // NEW: Setup listener to show/hide log field based on sport
+            setupSportChangeListener();
+        }
+
+        // NEW FUNCTION: Toggle log field visibility for Cricket/Mini Cricket
+        function setupSportChangeListener() {
+            const sportSelect = document.getElementById('update-sport');
+            const logFieldContainer = document.getElementById('log-field-container');
+            const updateLogTextarea = document.getElementById('update-log');
+            
+            if (sportSelect && logFieldContainer && updateLogTextarea) {
+                function toggleLogField() {
+                    const selectedSport = sportSelect.value;
+                    const needsLog = selectedSport === 'Cricket' || selectedSport === 'Mini Cricket';
+                    
+                    if (needsLog) {
+                        logFieldContainer.classList.remove('hidden');
+                        updateLogTextarea.required = true;
+                    } else {
+                        logFieldContainer.classList.add('hidden');
+                        updateLogTextarea.required = false;
+                        updateLogTextarea.value = ''; // Clear log if sport changes
+                    }
+                }
+                // Initial check
+                toggleLogField(); 
+                // Listen for changes
+                sportSelect.addEventListener('change', toggleLogField);
+            }
+        }
+
+        async function handleResultSubmission(event) {
+            event.preventDefault();
+            
+            if (!auth.currentUser || !auth.currentUser.uid) {
+                console.error("Database not initialized or user not logged in.");
+                displayMessage(texts[currentLang].errorPublishLogin, "text-red-400");
+                return;
+            }
+
+            const userIdForWrite = auth.currentUser.uid;
+
+            const sport = document.getElementById('update-sport').value;
+            const title = document.getElementById('update-title').value;
+            const result = document.getElementById('update-result').value;
+            const dateInput = document.getElementById('update-date').value;
+            
+            // NEW: Get Log content (only required if applicable)
+            const logElement = document.getElementById('update-log');
+            const log = logElement.value;
+
+
+            if (!sport || !title || !result || !dateInput) {
+                displayMessage(texts[currentLang].errorPublishFields, "text-yellow-400");
+                return;
+            }
+            
+            // Extra check for log if it's cricket/mini cricket
+            if ((sport === 'Cricket' || sport === 'Mini Cricket') && !log.trim()) {
+                 displayMessage(texts[currentLang].errorPublishFields, "text-yellow-400"); // Assuming we want log to be mandatory for these
+                 return;
+            }
+
+            const timestamp = new Date(dateInput).toISOString();
+
+            const newResult = {
+                sport: sport,
+                title: title,
+                result: result,
+                log: log, // NEW: Save the log content
+                timestamp: timestamp, 
+                createdAt: serverTimestamp() 
+            };
+
+            try {
+                // Storing data in the admin's private collection using the authenticated user's ID
+                const resultCollectionPath = artifacts/${appId}/users/${userIdForWrite}/game_updates;
+                await addDoc(collection(db, resultCollectionPath), newResult);
+                
+                displayMessage(texts[currentLang].successPublish, "text-green-400");
+                document.getElementById('result-form').reset();
+                setupSportChangeListener(); // Re-run to hide/clear log field
+
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                displayMessage(${texts[currentLang].errorPublish} ${e.message}, "text-red-400");
+            }
+        }
+
+        function displayMessage(message, colorClass) {
+            const msgElement = document.getElementById('admin-message');
+            if (msgElement) {
+                msgElement.textContent = message;
+                msgElement.className = mt-4 text-sm ${colorClass};
+                setTimeout(() => {
+                    msgElement.textContent = '';
+                    msgElement.className = 'mt-4 text-sm text-green-400';
+                }, 5000);
+            }
+        }
+
+        function listenForGameResults() {
+            if (!db || !auth.currentUser) return;
+            
+            // Rely on the currently authenticated user (who posted the data)
+            const adminUserId = auth.currentUser.uid; 
+            
+            const resultsCollectionPath = artifacts/${appId}/users/${adminUserId}/game_updates;
+            const resultsQuery = query(
+                collection(db, resultsCollectionPath),
+                // IMPORTANT: Firebase cannot order by multiple fields like this without creating complex indexes.
+                // It is safer and standard to sort by one field ('timestamp') for recency.
+                orderBy('timestamp', 'desc'),
+                limit(6)
+            );
+
+            onSnapshot(resultsQuery, (snapshot) => {
+                const resultsContainer = document.getElementById('results-container');
+                resultsContainer.innerHTML = '';
+                
+                const results = [];
+                snapshot.forEach((doc) => {
+                    results.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (results.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="md:col-span-3 text-center text-slate-500 text-xl p-10 bg-white rounded-xl shadow-md border-t-4 border-red-600">
+                            <i class="fa-solid fa-circle-info mr-2"></i> ${texts[currentLang].noResults}
+                        </div>
+                    `;
+                    return;
+                }
+
+                results.forEach(result => {
+                    const resultCard = createResultCard(result);
+                    resultsContainer.appendChild(resultCard);
+                });
+                
+                // NEW: Setup log toggle listeners for the newly added cards
+                setupLogToggleListeners();
+
+            }, (error) => {
+                console.error("Error listening to game results:", error);
+                const resultsContainer = document.getElementById('results-container');
+                resultsContainer.innerHTML = <div class="md:col-span-3 text-center text-red-600 text-lg p-10 bg-red-50 rounded-xl shadow-inner"><i class="fa-solid fa-xmark-circle mr-2"></i> ${texts[currentLang].errorLoad}</div>;
+            });
+        }
+        
+        // NEW FUNCTION: Setup delegated listeners for the log toggle buttons
+        function setupLogToggleListeners() {
+            document.querySelectorAll('.log-toggle-btn').forEach(button => {
+                // Remove existing listener to prevent duplicates before adding a new one
+                button.removeEventListener('click', toggleLogVisibility);
+                button.addEventListener('click', toggleLogVisibility);
+            });
+        }
+
+        function createResultCard(result) {
+            const lang = currentLang;
+            // Format date based on current language setting (bn-BD for Bengali, en-US for English)
+            const dateStr = result.timestamp ? new Date(result.timestamp).toLocaleDateString(lang === 'bn' ? 'bn-BD' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : texts[lang].dateUnknown;
+            
+            let iconClass = 'fa-solid fa-trophy';
+            let bgColor = 'bg-red-500';
+            let sportNameDisplay = result.sport; 
+
+            switch(result.sport) {
+                case 'Football': 
+                    iconClass = 'fa-solid fa-futbol'; 
+                    bgColor = 'bg-blue-600';
+                    sportNameDisplay = texts[lang].sportFootball;
+                    break;
+                case 'Cricket': 
+                    iconClass = 'fa-solid fa-cricket-bat-ball'; 
+                    bgColor = 'bg-green-600';
+                    sportNameDisplay = texts[lang].sportCricket;
+                    break;
+                case 'Mini Cricket': 
+                    // UPDATED ICON CLASS
+                    iconClass = 'fa-solid fa-cricket-bat-ball'; 
+                    bgColor = 'bg-yellow-600';
+                    sportNameDisplay = texts[lang].sportMiniCricket;
+                    break;
+                case 'Badminton': 
+                    iconClass = 'fa-solid fa-table-tennis-paddle-ball'; 
+                    bgColor = 'bg-purple-600';
+                    sportNameDisplay = texts[lang].sportBadminton;
+                    break;
+                case 'Volleyball': 
+                    iconClass = 'fa-solid fa-volleyball'; 
+                    bgColor = 'bg-orange-600';
+                    sportNameDisplay = texts[lang].sportVolleyball;
+                    break;
+            }
+            
+            // NEW: Log display logic
+            const hasLog = result.log && result.log.trim() !== '';
+            const logSection = hasLog ? `
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <button class="log-toggle-btn w-full text-left flex justify-between items-center text-sm font-semibold text-red-600 hover:text-red-700 transition" 
+                            data-log-id="log-${result.id}">
+                        <span data-key="logDetailsToggle">${texts[lang].logDetailsToggle}</span>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform transform"></i>
+                    </button>
+                    <div id="log-${result.id}" class="match-log-content mt-3 text-sm text-slate-700 bg-slate-50 p-4 rounded-lg hidden whitespace-pre-wrap">
+                        ${result.log.replace(/\n/g, '<br>')}
+                    </div>
+                </div>
+            ` : '';
+
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-2xl result-card-shadow p-6 transition transform hover:scale-[1.02] duration-300 border-b-4 border-red-600';
+            
+            card.innerHTML = `
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-100">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 ${bgColor} rounded-full flex items-center justify-center mr-3 text-white">
+                             <i class="${iconClass} text-sm"></i>
+                        </div>
+                        <span class="text-sm font-bold uppercase tracking-widest text-slate-600">${sportNameDisplay}</span>
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium">${dateStr}</span>
+                </div>
+                
+                <h3 class="text-xl font-extrabold text-slate-900 mb-4 leading-snug">${result.title || texts[lang].titlePlaceholder}</h3>
+                
+                <div class="bg-red-50 p-4 rounded-xl border border-red-200">
+                    <p class="text-base font-medium text-slate-600 mb-1">${texts[lang].matchResultLabel}</p>
+                    <p class="text-2xl font-black text-red-700">${result.result || texts[lang].noResult}</p>
+                </div>
+                
+                ${logSection} <!-- Log section -->
+            `;
+            return card;
+        }
+
+
+        // --- Initialization on load ---
+        window.onload = function() {
+            // Set initial language from storage or default
+            setLanguage(currentLang); 
+
+            // Setup language toggle listener
+            const toggleButton = document.getElementById('lang-toggle');
+            if (toggleButton) {
+                toggleButton.addEventListener('click', () => {
+                    const newLang = currentLang === 'bn' ? 'en' : 'bn';
+                    setLanguage(newLang);
+                    
+                    // Re-run data listeners to update dynamic UI texts (e.g., error messages)
+                    if (isAuthReady) {
+                        listenForGameResults();
+                    }
+                });
+            }
+            
+            // Set current year in footer
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+            // Initialize Firebase
+            initializeFirebase();
+        }
+
+    </script>
+</body>
+</html>
